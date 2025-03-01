@@ -5,6 +5,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Home from "./Home/Home";
 import Login from "./Home/Login";
+import Register from "./Home/Register";
 
 function App() {
   const [count, setCount] = createSignal(0)
@@ -13,6 +14,7 @@ function App() {
     <>
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
       <div class="min-h-screen bg-gray-100">
       </div>
       <div>
