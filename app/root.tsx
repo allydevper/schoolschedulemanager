@@ -29,10 +29,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>School Schedule Manager</title>
+        <meta name="description" content="A modern school schedule management web app" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className={`bg-background text-foreground min-h-screen`}>
         {children}
         <ScrollRestoration />
         <Scripts />
