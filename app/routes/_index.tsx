@@ -7,9 +7,7 @@ export default function Index() {
 
     const [idioma, setIdioma] = useState('');
 
-    // Efecto para obtener el idioma al montar el componente
     useEffect(() => {
-        // Obtener el idioma del navegador
         const idiomaNavegador = navigator.language || "en-US";
         setIdioma(idiomaNavegador);
     }, []);
@@ -30,14 +28,13 @@ export default function Index() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {/* Today's Schedule */}
                 <Card className="col-span-2">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle>Today&apos;s Schedule</CardTitle>
                             <CardDescription>Your classes for today</CardDescription>
                         </div>
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant="outline" size="sm" asChild className="text-white">
                             <Link to="/schedule">View Full Schedule</Link>
                         </Button>
                     </CardHeader>

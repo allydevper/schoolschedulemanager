@@ -30,9 +30,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return (
         <>
             {isAuthPage ? (
-                <main className="min-h-screen flex items-center justify-center p-4 bg-background">{children}</main>
+                <main className="min-h-screen flex items-center justify-center p-4 bg-secondary">{children}</main>
             ) : (
-                <div className="flex h-screen bg-background">
+                <div className="flex h-screen bg-secondary">
                     <Button
                         variant="ghost"
                         size="icon"
