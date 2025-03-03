@@ -31,7 +31,7 @@ body {
     --muted: 43 30% 90%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 39 89% 78%;
+    --accent: 189 28% 86%;
     --accent-foreground: 0 0% 10%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,45 +39,48 @@ body {
 
     --border: 0 0% 100%;
     --input: 43 30% 85%;
-    --ring: 39 89% 78%;
+    --ring: 189 28% 86%;
 
     --radius: 0.75rem;
   }
+
   .dark {
-    --background: 43 30% 15%;
-    --foreground: 43 40% 95%;
+    --background: 0 0% 3%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 43 40% 95%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 43 40% 95%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 39 89% 78%;
-    --primary-foreground: 0 0% 10%;
+    --primary: 150 80% 35%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 43 30% 20%;
-    --secondary-foreground: 43 40% 95%;
+    --secondary: 160 25% 15%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 43 30% 20%;
-    --muted-foreground: 43 20% 65%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 39 89% 78%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 150 80% 35%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 43 40% 95%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 43 30% 25%;
-    --input: 43 30% 25%;
-    --ring: 39 89% 78%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 150 80% 35%;
   }
 }
+
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
