@@ -1,10 +1,24 @@
 import { Link } from "@remix-run/react";
-import { Eye, EyeOff, Mail, User } from "lucide-react"
+import { Eye, EyeOff, Mail, User } from "lucide-react";
 import { useState } from "react";
+import { account } from "~/appwrite";
 
 export default function Register() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [showPassword, setShowPassword] = useState(false)
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await account.create('unique()', email, password, username);
+      alert('Registration successful!');
+    } catch (error: any) {
+      console.error(error);
+      alert('Registration failed: ' + error?.message);
+    }
+  };
 
   return (
     <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-sm">
@@ -12,7 +26,7 @@ export default function Register() {
         <h1 className="text-2xl font-bold text-center flex-1 pr-7">Create an account</h1>
       </div>
 
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleRegister}>
         <div className="space-y-2">
           <label htmlFor="username" className="block font-medium">
             Username
@@ -26,6 +40,8 @@ export default function Register() {
               type="text"
               placeholder="Username"
               className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
         </div>
@@ -43,6 +59,8 @@ export default function Register() {
               type="email"
               placeholder="Enter Email Address"
               className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
         </div>
@@ -60,6 +78,8 @@ export default function Register() {
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
