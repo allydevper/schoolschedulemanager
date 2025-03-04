@@ -52,6 +52,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         );
     }
 
+    const logOutUser = async () => {
+        try {
+            await account.deleteSession("current");
+            navigate("/login");
+        } catch (error: any) {
+            console.error(error);
+        }
+    }
+
     return (
         <>
             <div className="flex h-screen bg-secondary">
@@ -102,10 +111,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                     {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
                                 </Button>
 
-                                <Button variant="ghost" size="icon" aria-label="Logout" asChild>
-                                    <Link to="/login">
-                                        <LogOut className="w-5 h-5" />
-                                    </Link>
+                                <Button variant="ghost" size="icon" aria-label="Logout" onClick={logOutUser}>
+                                    <LogOut className="w-5 h-5" />
                                 </Button>
                             </div>
                         </div>
