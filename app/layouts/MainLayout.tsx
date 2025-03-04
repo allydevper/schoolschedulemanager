@@ -11,6 +11,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     const [theme, setTheme] = useState("light")
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const location = useLocation();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
 
     const navItems = [
         { name: "Dashboard", href: "/", icon: Home },
@@ -27,10 +30,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         localStorage.setItem("theme", newTheme)
     }
 
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
-
     useEffect(() => {
         const checkUser = async () => {
             try {
@@ -45,10 +44,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         checkUser();
     }, [navigate]);
 
-    if (loading) {
+    if (loading || user === null) {
         return (
             <div className="flex h-screen items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
             </div>
         );
     }
