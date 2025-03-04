@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
@@ -44,9 +45,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+
   return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
+    <>
+      {isAuthPage ? (
+        <Outlet />
+      ) : (
+        <MainLayout>
+          <Outlet />
+        </MainLayout>
+      )}
+    </>
   );
 }
