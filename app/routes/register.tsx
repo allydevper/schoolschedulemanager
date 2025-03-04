@@ -17,6 +17,7 @@ export default function Register() {
     e.preventDefault();
     try {
       await account.create('unique()', email, password, username);
+      await account.createEmailPasswordSession(email, password);
       navigate("/");
     } catch (error: any) {
       console.error(error);

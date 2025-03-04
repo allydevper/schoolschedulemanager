@@ -14,7 +14,7 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await account.createSession(email, password);
+      await account.createEmailPasswordSession(email, password);
       navigate("/");
     } catch (error: any) {
       console.error(error);
