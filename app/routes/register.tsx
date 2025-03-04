@@ -1,9 +1,11 @@
-import { Link } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 import { Eye, EyeOff, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { account } from "~/appwrite";
 
 export default function Register() {
+  const navigate = useNavigate();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -13,10 +15,9 @@ export default function Register() {
     e.preventDefault();
     try {
       await account.create('unique()', email, password, username);
-      alert('Registration successful!');
+      navigate("/");
     } catch (error: any) {
       console.error(error);
-      alert('Registration failed: ' + error?.message);
     }
   };
 
