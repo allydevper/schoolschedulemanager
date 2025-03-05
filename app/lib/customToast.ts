@@ -1,6 +1,11 @@
 import { toast } from "sonner";
 
 export const showToast = (message: string, type?: 'success' | 'danger' | 'normal') => {
+
+    if (message.indexOf("Rate limit for the current endpoint has been exceeded. Please try again after some time.") !== -1) {
+        message = "Problem with the server. Please try again later.";
+    }    
+
     switch (type) {
         case 'success':
             toast.success(message, {
