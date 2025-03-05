@@ -22,13 +22,22 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         { name: "Notifications", href: "/notifications", icon: Bell },
         { name: "Settings", href: "/settings", icon: Settings },
     ]
-
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light"
         setTheme(newTheme)
         document.documentElement.classList.toggle("dark")
         localStorage.setItem("theme", newTheme)
     }
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            setTheme(savedTheme);
+            if (savedTheme === "dark") {
+                document.documentElement.classList.add("dark");
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -56,6 +65,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         try {
             await account.deleteSession("current");
             navigate("/login");
+            if (theme != "light") {
+                document.documentElement.classList.add("dark");
+            }
         } catch (error: any) {
             console.error(error);
         }
