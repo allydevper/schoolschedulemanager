@@ -3,6 +3,7 @@ import { Eye, EyeOff, Mail, User } from "lucide-react";
 import React, { useState } from "react";
 import { account } from "~/appwrite";
 import AuthLayout from '../layouts/AuthLayout';
+import { showToast } from "~/lib/customToast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function Login() {
       navigate("/");
     } catch (error: any) {
       console.error(error);
+      showToast(error?.message, "danger");
     }
   };
 
