@@ -2,23 +2,24 @@ import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { useUser } from "~/context/UserContext";
 
 export default function Index() {
 
-    const [idioma, setIdioma] = useState('');
+    const { user } = useUser();
+    const [language, setLanguage] = useState('');
 
     useEffect(() => {
-        const idiomaNavegador = navigator.language || "en-US";
-        setIdioma(idiomaNavegador);
+        const localLanguage = navigator.language || "en-US";
+        setLanguage(localLanguage);
     }, []);
-
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Dashboard by {user?.name}</h1>
                 <p className="text-muted-foreground">
-                    {idioma && new Date().toLocaleDateString(idioma, {
+                    {language && new Date().toLocaleDateString(language, {
                         weekday: "long",
                         year: "numeric",
                         month: "long",

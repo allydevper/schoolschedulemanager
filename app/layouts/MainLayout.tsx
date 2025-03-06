@@ -1,19 +1,16 @@
 import { Link, useNavigate } from "@remix-run/react";
 import { useLocation } from "@remix-run/react";
-import { Models } from "appwrite";
 import { Bell, Calendar, CheckSquare, Home, LogOut, Menu, Moon, Settings, Sun, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { account } from "~/appwrite";
 import { Button } from "~/components/ui/button";
+import { UserProvider } from "~/context/UserContext";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
-
-    const [theme, setTheme] = useState("light")
-    const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [theme, setTheme] = useState("light");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
 
     const navItems = [
         { name: "Dashboard", href: "/", icon: Home },
@@ -21,45 +18,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         { name: "Tasks", href: "/tasks", icon: CheckSquare },
         { name: "Notifications", href: "/notifications", icon: Bell },
         { name: "Settings", href: "/settings", icon: Settings },
-    ]
+    ];
+
     const toggleTheme = () => {
-        const newTheme = theme === "light" ? "dark" : "light"
-        setTheme(newTheme)
-        document.documentElement.classList.toggle("dark")
-        localStorage.setItem("theme", newTheme)
-    }
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme) {
-            setTheme(savedTheme);
-            if (savedTheme === "dark") {
-                document.documentElement.classList.add("dark");
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        const checkUser = async () => {
-            try {
-                const userData = await account.get();
-                setUser(userData);
-            } catch {
-                navigate("/login");
-            } finally {
-                setLoading(false);
-            }
-        };
-        checkUser();
-    }, [navigate]);
-
-    if (loading || user === null) {
-        return (
-            <div className="flex h-screen items-center justify-center">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
-            </div>
-        );
-    }
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+        document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", newTheme);
+    };
 
     const logOutUser = async () => {
         try {
@@ -71,10 +37,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         } catch (error: any) {
             console.error(error);
         }
-    }
+    };
 
     return (
-        <>
+        <UserProvider>
             <div className="flex h-screen bg-secondary">
                 <Button
                     variant="ghost"
@@ -96,7 +62,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
                         <nav className="flex-1 p-4 space-y-1">
                             {navItems.map((item) => {
-                                const isActive = location.pathname === item.href
+                                const isActive = location.pathname === item.href;
                                 return (
                                     <Link
                                         key={item.name}
@@ -108,7 +74,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                         <item.icon className="w-5 h-5 mr-3" />
                                         <span>{item.name}</span>
                                     </Link>
-                                )
+                                );
                             })}
                         </nav>
 
@@ -133,6 +99,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
                 <main className="flex-1 md:ml-64 p-4 overflow-auto">{children}</main>
             </div>
-        </>
+        </UserProvider>
     );
 }
