@@ -4,7 +4,6 @@ import { Eye, EyeOff, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { account } from "~/appwrite";
 import AuthLayout from '../layouts/AuthLayout';
-import { toast } from 'sonner';
 import { showToast } from '~/lib/customToast';
 
 export default function Register() {
