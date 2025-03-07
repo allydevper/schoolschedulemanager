@@ -41,7 +41,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
     return (
         <UserProvider>
-            <div className="flex h-screen bg-secondary">
+            <div className="flex bg-secondary">
                 <Button
                     variant="ghost"
                     size="icon"
@@ -96,8 +96,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         </div>
                     </div>
                 </aside>
-
-                <main className="flex-1 md:ml-64 p-4 overflow-auto">{children}</main>
+                <main className="flex-1 md:ml-64 p-4 overflow-y-auto min-h-screen">{children}</main>
             </div>
         </UserProvider>
     );
