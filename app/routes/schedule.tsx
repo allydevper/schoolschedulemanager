@@ -142,7 +142,7 @@ export default function Schedule() {
                                     {schedule[day].map((classItem) => (
                                         <div
                                             key={classItem.id}
-                                            className="flex items-start p-4 rounded-lg border bg-card transition-all hover:shadow-md"
+                                            className="flex items-start p-4 rounded-lg border bg-card transition-all hover:ring ring-cyan-900/50"
                                         >
                                             <div className="flex-1 space-y-1">
                                                 <div className="flex items-center justify-between">
