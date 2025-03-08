@@ -217,48 +217,52 @@ export default function Schedule() {
                                 placeholder="e.g. Mathematics"
                             />
                         </div>
-
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="startTime">Start Time</Label>
-                                <div className="flex space-x-2">
-                                    <TimePickerInput
-                                        picker="hours"
-                                        date={dateStart}
-                                        setDate={setDateStart}
-                                        ref={hourRef}
-                                        onLeftFocus={() => hourRef.current?.focus()}
-                                    />
-                                    <TimePickerInput
-                                        picker="minutes"
-                                        date={dateStart}
-                                        setDate={setDateStart}
-                                        ref={minuteRef}
-                                        onLeftFocus={() => minuteRef.current?.focus()}
-                                    />
-                                </div>
-                            </div>
+    <div className="space-y-2">
+        <Label htmlFor="startTime">Start Time</Label>
+        <div className="flex space-x-2 w-full">
+            <TimePickerInput
+                picker="hours"
+                date={dateStart}
+                setDate={setDateStart}
+                ref={hourRef}
+                onLeftFocus={() => hourRef.current?.focus()}
+                className="w-full"
+            />
+            <TimePickerInput
+                picker="minutes"
+                date={dateStart}
+                setDate={setDateStart}
+                ref={minuteRef}
+                onLeftFocus={() => minuteRef.current?.focus()}
+                className="w-full"
+            />
+        </div>
+    </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="endTime">End Time</Label>
-                                <div className="flex space-x-2">
-                                    <TimePickerInput
-                                        picker="hours"
-                                        date={dateEnd}
-                                        setDate={setDateEnd}
-                                        ref={hourRef}
-                                        onLeftFocus={() => hourRef.current?.focus()}
-                                    />
-                                    <TimePickerInput
-                                        picker="minutes"
-                                        date={dateEnd}
-                                        setDate={setDateEnd}
-                                        ref={minuteRef}
-                                        onLeftFocus={() => minuteRef.current?.focus()}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+    <div className="space-y-2">
+        <Label htmlFor="endTime">End Time</Label>
+        <div className="flex space-x-2 w-full">
+            <TimePickerInput
+                picker="hours"
+                date={dateEnd}
+                setDate={setDateEnd}
+                ref={hourRef}
+                onLeftFocus={() => hourRef.current?.focus()}
+                className="w-full"
+            />
+            <TimePickerInput
+                picker="minutes"
+                date={dateEnd}
+                setDate={setDateEnd}
+                ref={minuteRef}
+                onLeftFocus={() => minuteRef.current?.focus()}
+                className="w-full"
+            />
+        </div>
+    </div>
+</div>
+
 
                         <div className="space-y-2">
                             <Label htmlFor="room">Room</Label>
