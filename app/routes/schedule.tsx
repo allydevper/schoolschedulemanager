@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Plus, Edit, Trash2 } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -6,6 +6,7 @@ import { Label } from "~/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog"
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import { TimePickerInput } from "~/components/ui/time-picker-input"
 
 const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"]
@@ -120,6 +121,12 @@ export default function Schedule() {
         setIsDialogOpen(false)
     }
 
+    const minuteRef = useRef<HTMLInputElement>(null);
+    const hourRef = useRef<HTMLInputElement>(null);
+
+    const [dateStart, setDateStart] = useState<Date>();
+    const [dateEnd, setDateEnd] = useState<Date>();
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -214,40 +221,42 @@ export default function Schedule() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="startTime">Start Time</Label>
-                                <Select
-                                    value={formData.startTime}
-                                    onValueChange={(value) => setFormData({ ...formData, startTime: value })}
-                                >
-                                    <SelectTrigger id="startTime">
-                                        <SelectValue placeholder="Start time" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {timeSlots.map((time) => (
-                                            <SelectItem key={time} value={time}>
-                                                {time}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <div className="flex space-x-2">
+                                    <TimePickerInput
+                                        picker="hours"
+                                        date={dateStart}
+                                        setDate={setDateStart}
+                                        ref={hourRef}
+                                        onLeftFocus={() => hourRef.current?.focus()}
+                                    />
+                                    <TimePickerInput
+                                        picker="minutes"
+                                        date={dateStart}
+                                        setDate={setDateStart}
+                                        ref={minuteRef}
+                                        onLeftFocus={() => minuteRef.current?.focus()}
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="endTime">End Time</Label>
-                                <Select
-                                    value={formData.endTime}
-                                    onValueChange={(value) => setFormData({ ...formData, endTime: value })}
-                                >
-                                    <SelectTrigger id="endTime">
-                                        <SelectValue placeholder="End time" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {timeSlots.map((time) => (
-                                            <SelectItem key={time} value={time}>
-                                                {time}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <div className="flex space-x-2">
+                                    <TimePickerInput
+                                        picker="hours"
+                                        date={dateEnd}
+                                        setDate={setDateEnd}
+                                        ref={hourRef}
+                                        onLeftFocus={() => hourRef.current?.focus()}
+                                    />
+                                    <TimePickerInput
+                                        picker="minutes"
+                                        date={dateEnd}
+                                        setDate={setDateEnd}
+                                        ref={minuteRef}
+                                        onLeftFocus={() => minuteRef.current?.focus()}
+                                    />
+                                </div>
                             </div>
                         </div>
 
