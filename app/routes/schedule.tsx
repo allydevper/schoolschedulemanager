@@ -70,13 +70,16 @@ export default function SchedulePage() {
         setSelectedDay(day)
         setSelectedClass(schedule)
 
-        const [startTime, endTime] = schedule.startTime
+        // const [startTime, endTime] = schedule.startTime
 
-        setFormData({
-            ...schedule,
-            startTime,
-            endTime,
-        })
+        setDateStart(new Date(schedule.startTime));
+        setDateEnd(new Date(schedule.endTime));
+
+        // setFormData({
+        //     ...schedule,
+        //     startTime,
+        //     endTime,
+        // })
 
         setIsDialogOpen(true)
     }
@@ -89,14 +92,14 @@ export default function SchedulePage() {
 
     const handleSaveClass = () => {
         try {
-            const { subject, startTime, endTime, room, teacher } = formData
-            const time = `${startTime} - ${endTime}`
+            // const { subject, startTime, endTime, room, teacher } = formData
+            // const time = `${startTime} - ${endTime}`
 
             const updatedSchedule = { ...schedule }
 
             if (selectedClass) {
                 updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
-                    item.id === selectedClass.id ? { ...item, subject, room, teacher } as Schedule : item,
+                    item.id === selectedClass.id ? { ...item, formData } as Schedule : item,
                 )
             } else {
                 // const newId =
@@ -195,7 +198,7 @@ export default function SchedulePage() {
                                                     </div>
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    {parseDateISO(schedule.startTime)} • {schedule.room} • {schedule.teacher}
+                                                    {parseDateISO(schedule.startTime)} - {parseDateISO(schedule.endTime)} • {schedule.room} • {schedule.teacher}
                                                 </div>
                                             </div>
                                         </div>
