@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { TimePickerInput } from "~/components/ui/time-picker-input"
+import { Schedule } from "~/lib/schedule"
 
 const _weekdays = {
     Monday: "Monday",
@@ -20,80 +21,53 @@ const _weekdays = {
 
 const weekdays = Object.keys(_weekdays);
 
-const initialSchedule = {
-    Monday: [
-        { id: 1, subject: "Mathematics", time: "09:00 - 10:30", room: "Room 101", teacher: "Dr. Smith" },
-        { id: 2, subject: "Physics", time: "11:00 - 12:30", room: "Room 203", teacher: "Prof. Johnson" },
-    ],
-    Tuesday: [
-        { id: 3, subject: "Computer Science", time: "09:00 - 10:30", room: "Lab 3", teacher: "Ms. Davis" },
-        { id: 4, subject: "English Literature", time: "11:00 - 12:30", room: "Room 105", teacher: "Mr. Wilson" },
-    ],
-    Wednesday: [
-        { id: 5, subject: "Chemistry", time: "09:00 - 10:30", room: "Lab 1", teacher: "Dr. Brown" },
-        { id: 6, subject: "History", time: "14:00 - 15:30", room: "Room 202", teacher: "Ms. Taylor" },
-    ],
-    Thursday: [
-        { id: 7, subject: "Biology", time: "11:00 - 12:30", room: "Lab 2", teacher: "Prof. Anderson" },
-        { id: 8, subject: "Art", time: "14:00 - 15:30", room: "Art Studio", teacher: "Ms. Martinez" },
-    ],
-    Friday: [
-        { id: 9, subject: "Physical Education", time: "09:00 - 10:30", room: "Gymnasium", teacher: "Coach Thompson" },
-        { id: 10, subject: "Music", time: "11:00 - 12:30", room: "Music Room", teacher: "Mr. Garcia" },
-    ],
-}
-
-interface ClassItem {
-    id: number
-    subject: string
-    time: string
-    room: string
-    teacher: string
-}
-
-export default function Schedule() {
-    const [schedule, setSchedule] = useState<Record<string, ClassItem[]>>(initialSchedule)
+export default function SchedulePage() {
+    const [schedule, setSchedule] = useState<Record<string, Schedule[]>>({})
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [selectedDay, setSelectedDay] = useState("Monday")
-    const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null)
-    const [formData, setFormData] = useState({
+    const [selectedClass, setSelectedClass] = useState<Schedule | null>(null)
+    const [formData, setFormData] = useState<Partial<Schedule>>({
+        id: "",
+        userId: "",
+        dayOfWeek: "",
         subject: "",
-        startTime: "09:00",
-        endTime: "10:30",
+        startTime: "",
+        endTime: "",
         room: "",
-        teacher: "",
+        teacher: ""
     })
 
     const handleAddClass = () => {
         setSelectedClass(null)
         setFormData({
+            id: "",
+            userId: "",
+            dayOfWeek: "",
             subject: "",
-            startTime: "09:00",
-            endTime: "10:30",
+            startTime: "",
+            endTime: "",
             room: "",
-            teacher: "",
+            teacher: ""
         })
         setIsDialogOpen(true)
     }
 
-    const handleEditClass = (day: string, classItem: ClassItem) => {
+    const handleEditClass = (day: string, schedule: Schedule) => {
         setSelectedDay(day)
-        setSelectedClass(classItem)
+        setSelectedClass(schedule)
 
-        const [startTime, endTime] = classItem.time.split(" - ")
+        const [startTime, endTime] = schedule.startTime
 
         setFormData({
-            subject: classItem.subject,
+            ...schedule,
             startTime,
             endTime,
-            room: classItem.room,
-            teacher: classItem.teacher,
         })
 
         setIsDialogOpen(true)
     }
 
-    const handleDeleteClass = (day: string, id: number) => {
+    const handleDeleteClass = (day: string, id: string) => {
         const updatedSchedule = { ...schedule }
         updatedSchedule[day] = updatedSchedule[day].filter((item) => item.id !== id)
         setSchedule(updatedSchedule)
@@ -107,23 +81,23 @@ export default function Schedule() {
 
         if (selectedClass) {
             updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
-                item.id === selectedClass.id ? { ...item, subject, time, room, teacher } : item,
+                item.id === selectedClass.id ? { ...item, subject, room, teacher } as Schedule : item,
             )
         } else {
-            const newId =
-                Math.max(
-                    0,
-                    ...Object.values(schedule)
-                        .flat()
-                        .map((item) => item.id),
-                ) + 1
-            const newClass = { id: newId, subject, time, room, teacher }
+            // const newId =
+            //     Math.max(
+            //         0,
+            //         ...Object.values(schedule)
+            //             .flat()
+            //             .map((item) => item.id),
+            //     ) + 1
+            const newClass = { id: "1", subject, time, room, teacher }
 
             if (!updatedSchedule[selectedDay]) {
                 updatedSchedule[selectedDay] = []
             }
 
-            updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay], newClass]
+            // updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay], newClass]
         }
 
         setSchedule(updatedSchedule)
@@ -155,27 +129,27 @@ export default function Schedule() {
                         <CardContent>
                             {schedule[day]?.length ? (
                                 <div className="space-y-4">
-                                    {schedule[day].map((classItem) => (
+                                    {schedule[day].map((schedule) => (
                                         <div
-                                            key={classItem.id}
+                                            key={schedule.id}
                                             className="flex items-start p-4 rounded-lg border bg-card transition-all hover:ring ring-cyan-900/50"
                                         >
                                             <div className="flex-1 space-y-1">
                                                 <div className="flex items-center justify-between">
-                                                    <h3 className="font-medium">{classItem.subject}</h3>
+                                                    <h3 className="font-medium">{schedule.subject}</h3>
                                                     <div className="flex space-x-2">
-                                                        <Button variant="ghost" size="icon" onClick={() => handleEditClass(day, classItem)}>
+                                                        <Button variant="ghost" size="icon" onClick={() => handleEditClass(day, schedule)}>
                                                             <Edit className="h-4 w-4" />
                                                             <span className="sr-only">Edit</span>
                                                         </Button>
-                                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClass(day, classItem.id)}>
+                                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClass(day, schedule.id)}>
                                                             <Trash2 className="h-4 w-4" />
                                                             <span className="sr-only">Delete</span>
                                                         </Button>
                                                     </div>
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    {classItem.time} • {classItem.room} • {classItem.teacher}
+                                                    {/* schedule.time */} • {schedule.room} • {schedule.teacher}
                                                 </div>
                                             </div>
                                         </div>
@@ -295,7 +269,7 @@ export default function Schedule() {
                     </div>
 
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        <Button onClick={() => setIsDialogOpen(false)}>
                             Cancel
                         </Button>
                         <Button onClick={handleSaveClass}>{selectedClass ? "Save Changes" : "Add Class"}</Button>
