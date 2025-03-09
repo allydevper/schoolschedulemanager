@@ -1,4 +1,5 @@
 import { useRef, useState } from "react"
+import { format } from "date-fns"
 import { Plus, Edit, Trash2 } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -8,6 +9,7 @@ import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { TimePickerInput } from "~/components/ui/time-picker-input"
 import { Schedule } from "~/lib/schedule"
+import { useUser } from "~/context/UserContext"
 
 const _weekdays = {
     Monday: "Monday",
@@ -22,6 +24,9 @@ const _weekdays = {
 const weekdays = Object.keys(_weekdays);
 
 export default function SchedulePage() {
+
+    const { user } = useUser();
+
     const [schedule, setSchedule] = useState<Record<string, Schedule[]>>({})
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [selectedDay, setSelectedDay] = useState("Monday")
@@ -37,7 +42,16 @@ export default function SchedulePage() {
         teacher: ""
     })
 
-    const handleAddClass = () => {
+    const handleAddClass = async () => {
+
+        const newDateStart = new Date();
+        newDateStart.setHours(9, 0, 0, 0);
+        setDateStart(newDateStart);
+
+        const newDateEnd = new Date();
+        newDateEnd.setHours(10, 30, 0, 0);
+        setDateEnd(newDateEnd);
+
         setSelectedClass(null)
         setFormData({
             id: "",
@@ -74,34 +88,62 @@ export default function SchedulePage() {
     }
 
     const handleSaveClass = () => {
-        const { subject, startTime, endTime, room, teacher } = formData
-        const time = `${startTime} - ${endTime}`
+        try {
+            const { subject, startTime, endTime, room, teacher } = formData
+            const time = `${startTime} - ${endTime}`
 
-        const updatedSchedule = { ...schedule }
+            const updatedSchedule = { ...schedule }
 
-        if (selectedClass) {
-            updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
-                item.id === selectedClass.id ? { ...item, subject, room, teacher } as Schedule : item,
-            )
-        } else {
-            // const newId =
-            //     Math.max(
-            //         0,
-            //         ...Object.values(schedule)
-            //             .flat()
-            //             .map((item) => item.id),
-            //     ) + 1
-            const newClass = { id: "1", subject, time, room, teacher }
+            if (selectedClass) {
+                updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
+                    item.id === selectedClass.id ? { ...item, subject, room, teacher } as Schedule : item,
+                )
+            } else {
+                // const newId =
+                //     Math.max(
+                //         0,
+                //         ...Object.values(schedule)
+                //             .flat()
+                //             .map((item) => item.id),
+                //     ) + 1
+                // const newClass = { id: "1", subject, time, room, teacher }
 
-            if (!updatedSchedule[selectedDay]) {
-                updatedSchedule[selectedDay] = []
+                if (!updatedSchedule[selectedDay]) {
+                    updatedSchedule[selectedDay] = []
+                }
+
+                updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay],
+                {
+                    ...formData,
+                    dayOfWeek: selectedDay,
+                    id: (updatedSchedule[selectedDay].length + 1).toString(),
+                    startTime: dateStart?.toISOString(),
+                    endTime: dateEnd?.toISOString()
+                } as Schedule]
+                console.log(updatedSchedule[selectedDay])
             }
 
-            // updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay], newClass]
-        }
+            setSchedule(updatedSchedule)
+            setIsDialogOpen(false)
+            // const scheduleData = await createSchedule({
+            //     id: "",
+            //     userId: user?.$id ?? "",
+            //     dayOfWeek: "",
+            //     subject: "",
+            //     startTime: "",
+            //     endTime: "",
+            //     room: "",
+            //     teacher: ""
+            // });
 
-        setSchedule(updatedSchedule)
-        setIsDialogOpen(false)
+            // setSchedules(scheduleData.documents);
+
+            // const taskData = await getTasks(userData.$id);
+            // setTasks(taskData.documents);
+        } catch (error: any) {
+            console.error(error);
+            // navigate("/login");
+        }
     }
 
     const minuteRef = useRef<HTMLInputElement>(null);
@@ -109,6 +151,10 @@ export default function SchedulePage() {
 
     const [dateStart, setDateStart] = useState<Date>();
     const [dateEnd, setDateEnd] = useState<Date>();
+
+    const parseDateISO = (date: string) => {
+        return format(new Date(date), "HH:mm");
+    }
 
     return (
         <div className="space-y-6">
@@ -149,7 +195,7 @@ export default function SchedulePage() {
                                                     </div>
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    {/* schedule.time */} • {schedule.room} • {schedule.teacher}
+                                                    {parseDateISO(schedule.startTime)} • {schedule.room} • {schedule.teacher}
                                                 </div>
                                             </div>
                                         </div>
@@ -222,7 +268,6 @@ export default function SchedulePage() {
                                     />
                                 </div>
                             </div>
-
                             <div className="space-y-2">
                                 <Label htmlFor="endTime">End Time</Label>
                                 <div className="flex space-x-2 w-full">
