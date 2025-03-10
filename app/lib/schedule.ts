@@ -1,13 +1,13 @@
-import { ID, Databases, Query } from "appwrite";
+import { ID, Databases, Query, Permission, Role } from "appwrite";
 import { client } from "~/appwrite";
 
 const database = new Databases(client);
-const dbId = "school_manager";
-const collection = "schedules";
+const dbId = "67c271e2003631f25454";
+const collection = "67c91d040016f78333be";
 
 export interface Schedule {
     id: string;
-    userId: string;
+    userId?: string;
     dayOfWeek: string;
     subject: string;
     startTime: string;
@@ -17,7 +17,11 @@ export interface Schedule {
 }
 
 export const createSchedule = async (schedule: Schedule) => {
-    return await database.createDocument(dbId, collection, ID.unique(), schedule);
+    return await database.createDocument(dbId, collection, ID.unique(), schedule, [
+        Permission.read(Role.user(schedule.userId!)),
+        Permission.update(Role.user(schedule.userId!)),
+        Permission.delete(Role.user(schedule.userId!)),
+    ]);
 };
 
 export const getSchedule = async (userId: string) => {

@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { TimePickerInput } from "~/components/ui/time-picker-input"
-import { Schedule } from "~/lib/schedule"
+import { createSchedule, Schedule } from "~/lib/schedule"
 import { useUser } from "~/context/UserContext"
 
 const _weekdays = {
@@ -88,7 +88,7 @@ export default function SchedulePage() {
         setSchedule(updatedSchedule)
     }
 
-    const handleSaveClass = () => {
+    const handleSaveClass = async () => {
         try {
             const updatedSchedule = { ...schedule }
 
@@ -103,6 +103,17 @@ export default function SchedulePage() {
                 if (!updatedSchedule[selectedDay]) {
                     updatedSchedule[selectedDay] = []
                 }
+
+                const scheduleResponse = await createSchedule({
+                    ...formData,
+                    userId: user?.$id,
+                    dayOfWeek: selectedDay,
+                    startTime: dateStart?.toISOString(),
+                    endTime: dateEnd?.toISOString()
+                } as Schedule);
+
+                console.log("scheduleResponse")
+                console.log(scheduleResponse);
 
                 updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay],
                 {
