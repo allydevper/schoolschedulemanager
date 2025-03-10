@@ -16,18 +16,19 @@ export interface Schedule {
     teacher: string;
 }
 
-export const createSchedule = async (schedule: Schedule) => {
-    delete schedule.id;
-    return await database.createDocument(dbId, collection, ID.unique(), schedule);
-};
-
 export const getSchedule = async (userId: string) => {
     return await database.listDocuments(dbId, collection, [
         Query.equal('userId', userId)
     ]);
 };
 
+export const createSchedule = async (schedule: Schedule) => {
+    delete schedule.id;
+    return await database.createDocument(dbId, collection, ID.unique(), schedule);
+};
+
 export const updateSchedule = async (scheduleId: string, schedule: Partial<Schedule>) => {
+    delete schedule.id;
     return await database.updateDocument(dbId, collection, scheduleId, schedule);
 };
 

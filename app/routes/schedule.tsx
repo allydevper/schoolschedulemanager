@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { TimePickerInput } from "~/components/ui/time-picker-input"
-import { createSchedule, getSchedule, Schedule } from "~/lib/schedule"
+import { createSchedule, getSchedule, Schedule, updateSchedule } from "~/lib/schedule"
 import { useUser } from "~/context/UserContext"
 import { showToast } from "~/lib/customToast"
 
@@ -128,24 +128,24 @@ export default function SchedulePage() {
         try {
             const updatedSchedule = { ...schedule }
 
+            const scheduleData = {
+                ...formData,
+                userId: user?.$id,
+                dayOfWeek: selectedDay,
+                startTime: dateStart?.toISOString(),
+                endTime: dateEnd?.toISOString()
+            } as Schedule
+
             if (selectedClass) {
+                await updateSchedule(scheduleData.id!, scheduleData);
                 updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
-                    item.id === selectedClass.id ? { ...item, ...formData } as Schedule : item,
+                    item.id === selectedClass.id ? { ...item, ...scheduleData } as Schedule : item,
                 )
-                console.log(updatedSchedule[selectedDay])
             } else {
 
                 if (!updatedSchedule[selectedDay]) {
                     updatedSchedule[selectedDay] = []
                 }
-
-                const scheduleData = {
-                    ...formData,
-                    userId: user?.$id,
-                    dayOfWeek: selectedDay,
-                    startTime: dateStart?.toISOString(),
-                    endTime: dateEnd?.toISOString()
-                } as Schedule
 
                 const scheduleResponse = await createSchedule(scheduleData);
                 updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay], { ...scheduleData, id: scheduleResponse.$id }]
