@@ -75,11 +75,9 @@ export default function SchedulePage() {
         setDateStart(new Date(schedule.startTime));
         setDateEnd(new Date(schedule.endTime));
 
-        // setFormData({
-        //     ...schedule,
-        //     startTime,
-        //     endTime,
-        // })
+        setFormData({
+            ...schedule,
+        })
 
         setIsDialogOpen(true)
     }
@@ -92,24 +90,15 @@ export default function SchedulePage() {
 
     const handleSaveClass = () => {
         try {
-            // const { subject, startTime, endTime, room, teacher } = formData
-            // const time = `${startTime} - ${endTime}`
-
             const updatedSchedule = { ...schedule }
 
+            console.log(updatedSchedule[selectedDay])
             if (selectedClass) {
                 updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
-                    item.id === selectedClass.id ? { ...item, formData } as Schedule : item,
+                    item.id === selectedClass.id ? { ...item, ...formData } as Schedule : item,
                 )
+                console.log(updatedSchedule[selectedDay])
             } else {
-                // const newId =
-                //     Math.max(
-                //         0,
-                //         ...Object.values(schedule)
-                //             .flat()
-                //             .map((item) => item.id),
-                //     ) + 1
-                // const newClass = { id: "1", subject, time, room, teacher }
 
                 if (!updatedSchedule[selectedDay]) {
                     updatedSchedule[selectedDay] = []
