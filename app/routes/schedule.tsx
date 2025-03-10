@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { format } from "date-fns"
 import { Plus, Edit, Trash2 } from "lucide-react"
 import { Button } from "~/components/ui/button"
@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { TimePickerInput } from "~/components/ui/time-picker-input"
-import { createSchedule, Schedule } from "~/lib/schedule"
+import { createSchedule, getSchedule, Schedule } from "~/lib/schedule"
 import { useUser } from "~/context/UserContext"
 import { showToast } from "~/lib/customToast"
 
@@ -43,6 +43,43 @@ export default function SchedulePage() {
         teacher: ""
     })
 
+    useEffect(() => {
+
+        const fetchSchedule = async () => {
+            try {
+
+                const response = await getSchedule(user?.$id!);
+                const scheduleData = response.documents.map((doc) => {
+                    return {
+                        id: doc.$id,
+                        userId: user?.$id,
+                        dayOfWeek: doc.dayOfWeek,
+                        subject: doc.subject,
+                        startTime: doc.startTime,
+                        endTime: doc.endTime,
+                        room: doc.room,
+                        teacher: doc.teacher
+                    } as Schedule
+                });
+                const schedule = {} as Record<string, Schedule[]>;
+
+                scheduleData.forEach((item) => {
+                    if (!schedule[item.dayOfWeek]) {
+                        schedule[item.dayOfWeek] = []
+                    }
+                    schedule[item.dayOfWeek].push(item)
+                })
+
+                setSchedule(schedule)
+            } catch (error: any) {
+                console.error(error);
+                showToast(error?.message, "danger");
+            }
+        }
+
+        fetchSchedule()
+    }, []);
+
     const handleAddClass = async () => {
 
         const newDateStart = new Date();
@@ -70,8 +107,6 @@ export default function SchedulePage() {
     const handleEditClass = (day: string, schedule: Schedule) => {
         setSelectedDay(day)
         setSelectedClass(schedule)
-
-        // const [startTime, endTime] = schedule.startTime
 
         setDateStart(new Date(schedule.startTime));
         setDateEnd(new Date(schedule.endTime));
@@ -113,11 +148,7 @@ export default function SchedulePage() {
                 } as Schedule
 
                 const scheduleResponse = await createSchedule(scheduleData);
-
-                console.log(scheduleResponse);
-
                 updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay], { ...scheduleData, id: scheduleResponse.$id }]
-                console.log(updatedSchedule[selectedDay])
             }
 
             setSchedule(updatedSchedule)

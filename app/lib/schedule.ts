@@ -23,7 +23,7 @@ export const createSchedule = async (schedule: Schedule) => {
 
 export const getSchedule = async (userId: string) => {
     return await database.listDocuments(dbId, collection, [
-        Query.equal('users', userId)
+        Query.equal('userId', userId)
     ]);
 };
 
