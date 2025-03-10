@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { TimePickerInput } from "~/components/ui/time-picker-input"
 import { createSchedule, Schedule } from "~/lib/schedule"
 import { useUser } from "~/context/UserContext"
+import { showToast } from "~/lib/customToast"
 
 const _weekdays = {
     Monday: "Monday",
@@ -92,7 +93,6 @@ export default function SchedulePage() {
         try {
             const updatedSchedule = { ...schedule }
 
-            console.log(updatedSchedule[selectedDay])
             if (selectedClass) {
                 updatedSchedule[selectedDay] = updatedSchedule[selectedDay].map((item) =>
                     item.id === selectedClass.id ? { ...item, ...formData } as Schedule : item,
@@ -104,48 +104,27 @@ export default function SchedulePage() {
                     updatedSchedule[selectedDay] = []
                 }
 
-                const scheduleResponse = await createSchedule({
+                const scheduleData = {
                     ...formData,
                     userId: user?.$id,
                     dayOfWeek: selectedDay,
                     startTime: dateStart?.toISOString(),
                     endTime: dateEnd?.toISOString()
-                } as Schedule);
+                } as Schedule
 
-                console.log("scheduleResponse")
+                const scheduleResponse = await createSchedule(scheduleData);
+
                 console.log(scheduleResponse);
 
-                updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay],
-                {
-                    ...formData,
-                    dayOfWeek: selectedDay,
-                    id: (updatedSchedule[selectedDay].length + 1).toString(),
-                    startTime: dateStart?.toISOString(),
-                    endTime: dateEnd?.toISOString()
-                } as Schedule]
+                updatedSchedule[selectedDay] = [...updatedSchedule[selectedDay], { ...scheduleData, id: scheduleResponse.$id }]
                 console.log(updatedSchedule[selectedDay])
             }
 
             setSchedule(updatedSchedule)
             setIsDialogOpen(false)
-            // const scheduleData = await createSchedule({
-            //     id: "",
-            //     userId: user?.$id ?? "",
-            //     dayOfWeek: "",
-            //     subject: "",
-            //     startTime: "",
-            //     endTime: "",
-            //     room: "",
-            //     teacher: ""
-            // });
-
-            // setSchedules(scheduleData.documents);
-
-            // const taskData = await getTasks(userData.$id);
-            // setTasks(taskData.documents);
         } catch (error: any) {
             console.error(error);
-            // navigate("/login");
+            showToast(error?.message, "danger");
         }
     }
 
@@ -191,7 +170,7 @@ export default function SchedulePage() {
                                                             <Edit className="h-4 w-4" />
                                                             <span className="sr-only">Edit</span>
                                                         </Button>
-                                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClass(day, schedule.id)}>
+                                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClass(day, schedule.id!)}>
                                                             <Trash2 className="h-4 w-4" />
                                                             <span className="sr-only">Delete</span>
                                                         </Button>

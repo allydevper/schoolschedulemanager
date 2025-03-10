@@ -4,7 +4,10 @@ export const showToast = (message: string, type?: 'success' | 'danger' | 'normal
 
     if (message.indexOf("Rate limit for the current endpoint has been exceeded. Please try again after some time.") !== -1) {
         message = "Problem with the server. Please try again later.";
-    }    
+    }
+    if (message.indexOf("Invalid document structure") !== -1) {
+        message = "Problem saving form.";
+    }
 
     switch (type) {
         case 'success':

@@ -6,7 +6,7 @@ const dbId = "67c271e2003631f25454";
 const collection = "67c91d040016f78333be";
 
 export interface Schedule {
-    id: string;
+    id?: string;
     userId?: string;
     dayOfWeek: string;
     subject: string;
@@ -17,11 +17,8 @@ export interface Schedule {
 }
 
 export const createSchedule = async (schedule: Schedule) => {
-    return await database.createDocument(dbId, collection, ID.unique(), schedule, [
-        Permission.read(Role.user(schedule.userId!)),
-        Permission.update(Role.user(schedule.userId!)),
-        Permission.delete(Role.user(schedule.userId!)),
-    ]);
+    delete schedule.id;
+    return await database.createDocument(dbId, collection, ID.unique(), schedule);
 };
 
 export const getSchedule = async (userId: string) => {
