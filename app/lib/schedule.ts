@@ -1,4 +1,4 @@
-import { ID, Databases, Query, Permission, Role } from "appwrite";
+import { ID, Databases, Query } from "appwrite";
 import { client } from "~/appwrite";
 
 const database = new Databases(client);
