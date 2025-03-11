@@ -43,6 +43,8 @@ export default function SchedulePage() {
         teacher: ""
     })
 
+    const [isSaving, setIsSaving] = useState(false);
+
     useEffect(() => {
 
         const fetchSchedule = async () => {
@@ -131,6 +133,7 @@ export default function SchedulePage() {
     }
 
     const handleSaveClass = async () => {
+        setIsSaving(true);
         try {
             const updatedSchedule = { ...schedule }
 
@@ -162,6 +165,8 @@ export default function SchedulePage() {
         } catch (error: any) {
             console.error(error);
             showToast(error?.message, "danger");
+        } finally {
+            setIsSaving(false);
         }
     }
 
@@ -336,7 +341,9 @@ export default function SchedulePage() {
                         <Button onClick={() => setIsDialogOpen(false)}>
                             Cancel
                         </Button>
-                        <Button onClick={handleSaveClass}>{selectedClass ? "Save Changes" : "Add Class"}</Button>
+                        <Button onClick={handleSaveClass} disabled={isSaving}>
+                            {selectedClass ? "Save Changes" : "Add Class"}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
