@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { TimePickerInput } from "~/components/ui/time-picker-input"
-import { createSchedule, getSchedule, Schedule, updateSchedule } from "~/lib/schedule"
+import { createSchedule, deleteSchedule, getSchedule, Schedule, updateSchedule } from "~/lib/schedule"
 import { useUser } from "~/context/UserContext"
 import { showToast } from "~/lib/customToast"
 
@@ -118,10 +118,16 @@ export default function SchedulePage() {
         setIsDialogOpen(true)
     }
 
-    const handleDeleteClass = (day: string, id: string) => {
-        const updatedSchedule = { ...schedule }
-        updatedSchedule[day] = updatedSchedule[day].filter((item) => item.id !== id)
-        setSchedule(updatedSchedule)
+    const handleDeleteClass = async (day: string, id: string) => {
+        try {
+            await deleteSchedule(id);
+            const updatedSchedule = { ...schedule }
+            updatedSchedule[day] = updatedSchedule[day].filter((item) => item.id !== id)
+            setSchedule(updatedSchedule)
+        } catch (error: any) {
+            console.error(error);
+            showToast(error?.message, "danger");
+        }
     }
 
     const handleSaveClass = async () => {
