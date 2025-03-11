@@ -180,6 +180,17 @@ export default function SchedulePage() {
         return format(new Date(date), "HH:mm");
     }
 
+    const validateForm = () => {
+        return (
+            formData.subject?.trim() &&
+            formData.room?.trim() &&
+            formData.teacher?.trim() &&
+            dateStart &&
+            dateEnd &&
+            dateStart < dateEnd
+        );
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -267,6 +278,7 @@ export default function SchedulePage() {
                                 id="subject"
                                 value={formData.subject}
                                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                                maxLength={50}
                                 placeholder="e.g. Mathematics"
                             />
                         </div>
@@ -322,6 +334,7 @@ export default function SchedulePage() {
                                 id="room"
                                 value={formData.room}
                                 onChange={(e) => setFormData({ ...formData, room: e.target.value })}
+                                maxLength={20}
                                 placeholder="e.g. Room 101"
                             />
                         </div>
@@ -332,6 +345,7 @@ export default function SchedulePage() {
                                 id="teacher"
                                 value={formData.teacher}
                                 onChange={(e) => setFormData({ ...formData, teacher: e.target.value })}
+                                maxLength={30}
                                 placeholder="e.g. Dr. Smith"
                             />
                         </div>
@@ -341,7 +355,7 @@ export default function SchedulePage() {
                         <Button onClick={() => setIsDialogOpen(false)}>
                             Cancel
                         </Button>
-                        <Button onClick={handleSaveClass} disabled={isSaving}>
+                        <Button onClick={handleSaveClass} disabled={isSaving || !validateForm()}>
                             {selectedClass ? "Save Changes" : "Add Class"}
                         </Button>
                     </DialogFooter>
