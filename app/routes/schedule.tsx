@@ -7,7 +7,7 @@ import { Label } from "~/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog"
 import { Input } from "~/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
-import { TimePickerInput } from "~/components/ui/time-picker-input"
+import { TimePickerInput } from "~/components/custom/time-picker-input"
 import { createSchedule, deleteSchedule, getSchedule, Schedule, updateSchedule } from "~/lib/schedule"
 import { useUser } from "~/context/UserContext"
 import { showToast } from "~/lib/customToast"
@@ -278,7 +278,7 @@ export default function SchedulePage() {
                                 id="subject"
                                 value={formData.subject}
                                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                maxLength={50}
+                                maxLength={30}
                                 placeholder="e.g. Mathematics"
                             />
                         </div>

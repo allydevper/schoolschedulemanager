@@ -16,18 +16,22 @@ export interface Task {
     completed: boolean;
 }
 
-export const createTask = async (userId: string, description: string, dueDate: string, status: string) => {
-    return await database.createDocument(dbId, collection, ID.unique(), {
-        userId, description, dueDate, status
-    });
-};
-
-export const getTasks = async (userId: string) => {
+export const getTask = async (userId: string) => {
     return await database.listDocuments(dbId, collection, [
-        Query.equal('users', userId)
+        Query.equal('userId', userId)
     ]);
 };
 
-export const updateTaskStatus = async (taskId: string, status: string) => {
-    return await database.updateDocument(dbId, collection, taskId, { status });
+export const createTask = async (task: Task) => {
+    delete task.id;
+    return await database.createDocument(dbId, collection, ID.unique(), task);
+};
+
+export const updateTask = async (taskId: string, task: Partial<Task>) => {
+    delete task.id;
+    return await database.updateDocument(dbId, collection, taskId, task);
+};
+
+export const deleteTask = async (taskId: string) => {
+    return await database.deleteDocument(dbId, collection, taskId);
 };

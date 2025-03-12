@@ -1,29 +1,72 @@
-import { Calendar, Edit, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon, Edit, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Calendar } from "~/components/ui/calendar";
 import { Card, CardContent } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Task } from "~/lib/tasks";
+import { useUser } from "~/context/UserContext";
+import { showToast } from "~/lib/customToast";
+import { getTask, Task } from "~/lib/tasks";
+import { cn } from "~/lib/utils";
 
 export default function TasksPage() {
+
+    const { user } = useUser();
 
     const [tasks, setTasks] = useState<Task[]>([])
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [selectedTask, setSelectedTask] = useState<Task | null>(null)
     const [activeTab, setActiveTab] = useState("all")
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<Partial<Task>>({
+        id: "",
+        userId: "",
         title: "",
         description: "",
-        subject: "Mathematics",
+        subject: "",
         deadline: "",
-        priority: "medium",
+        priority: "",
     })
+    const [date, setDate] = useState<Date>(new Date())
+
+    const handleSelectDate = (selectedDate: Date | undefined) => {
+        if (!selectedDate) return;
+        setDate(selectedDate);
+    };
+
+    useEffect(() => {
+
+        const fetchTask = async () => {
+            try {
+                const response = await getTask(user?.$id!);
+                const TaskData = response.documents.map((doc) => {
+                    return {
+                        id: doc.$id,
+                        userId: user?.$id,
+                        title: doc.title,
+                        description: doc.description,
+                        subject: doc.subject,
+                        deadline: doc.deadline,
+                        priority: doc.priority,
+                        completed: doc.completed
+                    } as Task
+                });
+                setTasks(TaskData)
+            } catch (error: any) {
+                console.error(error);
+                showToast(error?.message, "danger");
+            }
+        }
+
+        fetchTask()
+    }, []);
 
     const filteredTasks = tasks.filter((task) => {
         if (activeTab === "all") return true
@@ -66,13 +109,11 @@ export default function TasksPage() {
     }
 
     const handleSaveTask = () => {
-        const { title, description, subject, deadline, priority } = formData
 
         if (selectedTask) {
-            // Edit existing task
             setTasks(
                 tasks.map((task) =>
-                    task.id === selectedTask.id ? { ...task, title, description, subject, deadline, priority } : task,
+                    task.id === selectedTask.id ? { ...task, ...formData } : task,
                 ),
             )
         } else {
@@ -236,15 +277,30 @@ export default function TasksPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <div className="space-y-2">
                             <Label htmlFor="deadline">Deadline</Label>
-                            <Input
-                                id="deadline"
-                                type="date"
-                                value={formData.deadline}
-                                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                            />
+                            <Popover>
+                                <PopoverTrigger asChild className="bg-white">
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon />
+                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-full p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={handleSelectDate}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
 
                         <div className="space-y-2">
@@ -266,7 +322,7 @@ export default function TasksPage() {
                     </div>
 
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        <Button onClick={() => setIsDialogOpen(false)}>
                             Cancel
                         </Button>
                         <Button onClick={handleSaveTask}>{selectedTask ? "Save Changes" : "Add Task"}</Button>
