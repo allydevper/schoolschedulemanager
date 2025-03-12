@@ -125,12 +125,14 @@ export default function TasksPage() {
 
     const handleSaveTask = () => {
 
+        console.log(formData)
+
         if (selectedTask) {
-            setTasks(
-                tasks.map((task) =>
-                    task.id === selectedTask.id ? { ...task, ...formData } : task,
-                ),
-            )
+            // setTasks(
+            //     tasks.map((task) =>
+            //         task.id === selectedTask.id ? { ...task, ...formData } : task,
+            //     ),
+            // )
         } else {
             // Add new task
             // const newId = Math.max(0, ...tasks.map((task) => task.id)) + 1
@@ -147,7 +149,7 @@ export default function TasksPage() {
             // setTasks([...tasks, newTask])
         }
 
-        setIsDialogOpen(false)
+        // setIsDialogOpen(false)
     }
 
     return (
@@ -334,11 +336,13 @@ export default function TasksPage() {
                         </div>
                     </div>
 
-                    <DialogFooter>
-                        <Button onClick={() => setIsDialogOpen(false)}>
+                    <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                        <Button onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                             Cancel
                         </Button>
-                        <Button onClick={handleSaveTask}>{selectedTask ? "Save Changes" : "Add Task"}</Button>
+                        <Button onClick={handleSaveTask} className="w-full sm:w-auto">
+                            {selectedTask ? "Save Changes" : "Add Task"}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

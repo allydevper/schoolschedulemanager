@@ -358,8 +358,8 @@ export default function SchedulePage() {
                         </div>
                     </div>
 
-                    <DialogFooter>
-                        <Button onClick={() => setIsDialogOpen(false)}>
+                    <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                        <Button onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                             Cancel
                         </Button>
                         <Button onClick={handleSaveClass} disabled={isSaving || !validateForm()}>
