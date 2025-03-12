@@ -247,7 +247,7 @@ export default function SchedulePage() {
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="bg-white">
+                <DialogContent className="bg-card">
                     <DialogHeader>
                         <DialogTitle>{selectedClass ? "Edit Class" : "Add New Class"}</DialogTitle>
                         <DialogDescription>

@@ -233,7 +233,7 @@ export default function TasksPage() {
             </Tabs>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="bg-white">
+                <DialogContent className="bg-card">
                     <DialogHeader>
                         <DialogTitle>{selectedTask ? "Edit Task" : "Add New Task"}</DialogTitle>
                         <DialogDescription>
@@ -280,7 +280,7 @@ export default function TasksPage() {
                         <div className="space-y-2">
                             <Label htmlFor="deadline">Deadline</Label>
                             <Popover>
-                                <PopoverTrigger asChild className="bg-white">
+                                <PopoverTrigger asChild className="bg-card">
                                     <Button
                                         variant={"outline"}
                                         className={cn(
