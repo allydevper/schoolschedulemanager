@@ -249,6 +249,7 @@ export default function TasksPage() {
                             <Input
                                 id="title"
                                 value={formData.title}
+                                maxLength={20}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                 placeholder="e.g. Math Assignment"
                             />
@@ -259,6 +260,7 @@ export default function TasksPage() {
                             <Input
                                 id="description"
                                 value={formData.description}
+                                maxLength={50}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 placeholder="e.g. Complete exercises 1-10"
                             />
