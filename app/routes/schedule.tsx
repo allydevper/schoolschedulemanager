@@ -84,6 +84,13 @@ export default function SchedulePage() {
 
     const handleAddClass = async () => {
 
+        const scheduleList: Schedule[] = Object.values(schedule).flat();
+
+        if (scheduleList.length > 30) {
+            showToast("You have reached the maximum limit of 30 classes.", "danger");
+            return;
+        }
+
         const newDateStart = new Date();
         newDateStart.setHours(9, 0, 0, 0);
         setDateStart(newDateStart);

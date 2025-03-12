@@ -18,8 +18,18 @@ export interface Schedule {
 
 export const getSchedule = async (userId: string) => {
     return await database.listDocuments(dbId, collection, [
-        Query.equal('userId', userId)
+        Query.equal('userId', userId),
+        Query.limit(30)
     ]);
+};
+
+export const getSubjects = async (userId: string) => {
+    const response = await database.listDocuments(dbId, collection, [
+        Query.equal('userId', userId),
+        Query.select(['subject']),
+        Query.limit(30)
+    ]);
+    return response.documents.map((doc: any) => doc.subject);
 };
 
 export const createSchedule = async (schedule: Schedule) => {
