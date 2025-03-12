@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useUser } from "~/context/UserContext";
 import { showToast } from "~/lib/customToast";
+import { getSubjects } from "~/lib/schedule";
 import { getTask, Task } from "~/lib/tasks";
 import { cn } from "~/lib/utils";
 
@@ -41,6 +42,8 @@ export default function TasksPage() {
         setDate(selectedDate);
     };
 
+    const [subjects, setSubjects] = useState<string[]>([])
+
     useEffect(() => {
 
         const fetchTask = async () => {
@@ -66,6 +69,18 @@ export default function TasksPage() {
         }
 
         fetchTask()
+
+        const fetchSubjects = async () => {
+            try {
+                const response = await getSubjects(user?.$id!);
+                setSubjects(response)
+            } catch (error: any) {
+                console.error(error);
+                showToast(error?.message, "danger");
+            }
+        }
+
+        fetchSubjects()
     }, []);
 
     const filteredTasks = tasks.filter((task) => {
@@ -81,7 +96,7 @@ export default function TasksPage() {
         setFormData({
             title: "",
             description: "",
-            subject: "Mathematics",
+            subject: "default",
             deadline: "",
             priority: "medium",
         })
@@ -134,19 +149,6 @@ export default function TasksPage() {
 
         setIsDialogOpen(false)
     }
-
-    const subjects = [
-        "Mathematics",
-        "Physics",
-        "Computer Science",
-        "English Literature",
-        "Chemistry",
-        "History",
-        "Biology",
-        "Art",
-        "Music",
-        "Physical Education",
-    ]
 
     return (
         <div className="space-y-6">
@@ -264,11 +266,18 @@ export default function TasksPage() {
 
                         <div className="space-y-2">
                             <Label htmlFor="subject">Subject</Label>
-                            <Select value={formData.subject} onValueChange={(value) => setFormData({ ...formData, subject: value })}>
+                            <Select
+                                value={formData.subject || "default"}
+                                onValueChange={(value) => setFormData({ ...formData, subject: value })}
+                            >
                                 <SelectTrigger id="subject">
-                                    <SelectValue placeholder="Select subject" />
+                                    <SelectValue placeholder="Choose a subject" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                    <SelectItem value="default" disabled>
+                                        Choose a subject
+                                    </SelectItem>
+
                                     {subjects.map((subject) => (
                                         <SelectItem key={subject} value={subject}>
                                             {subject}
@@ -276,6 +285,8 @@ export default function TasksPage() {
                                     ))}
                                 </SelectContent>
                             </Select>
+
+
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="deadline">Deadline</Label>
