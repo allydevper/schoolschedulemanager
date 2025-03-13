@@ -32,6 +32,11 @@ export const updateTask = async (taskId: string, task: Partial<Task>) => {
     return await database.updateDocument(dbId, collection, taskId, taskData);
 };
 
+export const updateCompleteTask = async (taskId: string, task: Partial<Task>) => {
+    const { completed } = task;
+    return await database.updateDocument(dbId, collection, taskId, { completed });
+};
+
 export const deleteTask = async (taskId: string) => {
     return await database.deleteDocument(dbId, collection, taskId);
 };

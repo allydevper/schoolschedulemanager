@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useUser } from "~/context/UserContext";
 import { showToast } from "~/lib/customToast";
 import { getSubjects } from "~/lib/schedule";
-import { createTask, deleteTask, getTask, Task, updateTask } from "~/lib/tasks";
+import { createTask, deleteTask, getTask, Task, updateCompleteTask, updateTask } from "~/lib/tasks";
 import { cn } from "~/lib/utils";
 
 export default function TasksPage() {
@@ -127,8 +127,24 @@ export default function TasksPage() {
         }
     }
 
-    const handleToggleComplete = (id: string) => {
-        setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
+    const handleToggleComplete = async (id: string) => {
+        try {
+            const taskToUpdate = tasks.find((task) => task.id === id);
+            if (!taskToUpdate) return;
+
+            const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+            setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+
+            updateCompleteTask(id, updatedTask).catch((error) => {
+                showToast(error?.message, "danger");
+                const updatedTask = { ...taskToUpdate, completed: taskToUpdate.completed };
+                setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+            });
+
+        } catch (error: any) {
+            console.error(error);
+            showToast(error?.message, "danger");
+        }
     }
 
     const handleSaveTask = async () => {
