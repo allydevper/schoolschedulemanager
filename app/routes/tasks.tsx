@@ -95,6 +95,8 @@ export default function TasksPage() {
     const handleAddTask = () => {
         setSelectedTask(null)
         setFormData({
+            id: "",
+            userId: "",
             title: "",
             description: "",
             subject: "default",
@@ -106,12 +108,11 @@ export default function TasksPage() {
 
     const handleEditTask = (task: Task) => {
         setSelectedTask(task)
+
+        setDate(new Date(task.deadline))
+
         setFormData({
-            title: task.title,
-            description: task.description,
-            subject: task.subject,
-            deadline: task.deadline,
-            priority: task.priority,
+            ...task
         })
         setIsDialogOpen(true)
     }
@@ -133,7 +134,6 @@ export default function TasksPage() {
     const handleSaveTask = async () => {
         setIsSaving(true);
         try {
-
             const taskData = {
                 ...formData,
                 userId: user?.$id,

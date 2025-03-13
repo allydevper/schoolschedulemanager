@@ -23,14 +23,13 @@ export const getTask = async (userId: string) => {
 };
 
 export const createTask = async (task: Task) => {
-    delete task.id;
-    return await database.createDocument(dbId, collection, ID.unique(), task);
+    const { id, ...taskData } = task;
+    return await database.createDocument(dbId, collection, ID.unique(), taskData);
 };
 
 export const updateTask = async (taskId: string, task: Partial<Task>) => {
-    console.log(task, taskId);
-    delete task.id;
-    return await database.updateDocument(dbId, collection, taskId, task);
+    const { id, ...taskData } = task;
+    return await database.updateDocument(dbId, collection, taskId, taskData);
 };
 
 export const deleteTask = async (taskId: string) => {

@@ -33,13 +33,13 @@ export const getSubjects = async (userId: string) => {
 };
 
 export const createSchedule = async (schedule: Schedule) => {
-    delete schedule.id;
-    return await database.createDocument(dbId, collection, ID.unique(), schedule);
+    const { id, ...scheduleData } = schedule;
+    return await database.createDocument(dbId, collection, ID.unique(), scheduleData);
 };
 
 export const updateSchedule = async (scheduleId: string, schedule: Partial<Schedule>) => {
-    delete schedule.id;
-    return await database.updateDocument(dbId, collection, scheduleId, schedule);
+    const { id, ...scheduleData } = schedule;
+    return await database.updateDocument(dbId, collection, scheduleId, scheduleData);
 };
 
 export const deleteSchedule = async (scheduleId: string) => {
