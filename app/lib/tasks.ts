@@ -28,6 +28,7 @@ export const createTask = async (task: Task) => {
 };
 
 export const updateTask = async (taskId: string, task: Partial<Task>) => {
+    console.log(task, taskId);
     delete task.id;
     return await database.updateDocument(dbId, collection, taskId, task);
 };

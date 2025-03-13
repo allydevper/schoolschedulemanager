@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useUser } from "~/context/UserContext";
 import { showToast } from "~/lib/customToast";
 import { getSubjects } from "~/lib/schedule";
-import { createTask, getTask, Task, updateTask } from "~/lib/tasks";
+import { createTask, deleteTask, getTask, Task, updateTask } from "~/lib/tasks";
 import { cn } from "~/lib/utils";
 
 export default function TasksPage() {
@@ -116,8 +116,14 @@ export default function TasksPage() {
         setIsDialogOpen(true)
     }
 
-    const handleDeleteTask = (id: string) => {
-        setTasks(tasks.filter((task) => task.id !== id))
+    const handleDeleteTask = async (id: string) => {
+        try {
+            await deleteTask(id);
+            setTasks(tasks.filter((task) => task.id !== id))
+        } catch (error: any) {
+            console.error(error);
+            showToast(error?.message, "danger");
+        }
     }
 
     const handleToggleComplete = (id: string) => {
@@ -194,7 +200,7 @@ export default function TasksPage() {
                                                 <div className="flex items-start justify-between">
                                                     <div>
                                                         <h3 className={`font-medium ${task.completed ? "line-through" : ""}`}>{task.title}</h3>
-                                                        <p className="text-sm text-muted-foreground">{task.subject}</p>
+                                                        <p className="text-sm text-muted-foreground">{task.subject == "default" ? "-" : task.subject}</p>
                                                     </div>
 
                                                     <div className="flex items-center gap-2">
@@ -226,7 +232,7 @@ export default function TasksPage() {
                                                 <p className="text-sm">{task.description}</p>
 
                                                 <div className="flex items-center text-sm text-muted-foreground">
-                                                    <Calendar className="mr-1 h-4 w-4" />
+                                                    <CalendarIcon className="mr-1 h-4 w-4" />
                                                     <span>Due: {new Date(task.deadline).toLocaleDateString()}</span>
                                                 </div>
                                             </div>
