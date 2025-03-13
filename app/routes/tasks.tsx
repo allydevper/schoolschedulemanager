@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useUser } from "~/context/UserContext";
 import { showToast } from "~/lib/customToast";
 import { getSubjects } from "~/lib/schedule";
-import { getTask, Task } from "~/lib/tasks";
+import { createTask, getTask, Task, updateTask } from "~/lib/tasks";
 import { cn } from "~/lib/utils";
 
 export default function TasksPage() {
@@ -35,6 +35,7 @@ export default function TasksPage() {
         deadline: "",
         priority: "",
     })
+    const [isSaving, setIsSaving] = useState(false)
     const [date, setDate] = useState<Date>(new Date())
 
     const handleSelectDate = (selectedDate: Date | undefined) => {
@@ -123,33 +124,39 @@ export default function TasksPage() {
         setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
     }
 
-    const handleSaveTask = () => {
+    const handleSaveTask = async () => {
+        setIsSaving(true);
+        try {
 
-        console.log(formData)
+            const taskData = {
+                ...formData,
+                userId: user?.$id,
+                deadline: date?.toISOString(),
+            } as Task
 
-        if (selectedTask) {
-            // setTasks(
-            //     tasks.map((task) =>
-            //         task.id === selectedTask.id ? { ...task, ...formData } : task,
-            //     ),
-            // )
-        } else {
-            // Add new task
-            // const newId = Math.max(0, ...tasks.map((task) => task.id)) + 1
-            // const newTask = {
-            //     id: newId,
-            //     title,
-            //     description,
-            //     subject,
-            //     deadline,
-            //     priority,
-            //     completed: false,
-            // }
+            if (selectedTask) {
+                await updateTask(taskData.id!, taskData);
+                setTasks(tasks.map((task) => (task.id === taskData.id ? taskData : task)))
+            } else {
+                const taskResponse = await createTask(taskData);
+                setTasks([...tasks, { ...taskData, id: taskResponse.$id }])
+            }
 
-            // setTasks([...tasks, newTask])
+            setIsDialogOpen(false)
+        } catch (error: any) {
+            console.error(error);
+            showToast(error?.message, "danger");
+        } finally {
+            setIsSaving(false);
         }
+    }
 
-        // setIsDialogOpen(false)
+    const validateForm = () => {
+        return (
+            formData.title?.trim() &&
+            formData.description?.trim() &&
+            date
+        );
     }
 
     return (
@@ -340,7 +347,7 @@ export default function TasksPage() {
                         <Button onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                             Cancel
                         </Button>
-                        <Button onClick={handleSaveTask} className="w-full sm:w-auto">
+                        <Button onClick={handleSaveTask} disabled={isSaving || !validateForm()} className="w-full sm:w-auto">
                             {selectedTask ? "Save Changes" : "Add Task"}
                         </Button>
                     </DialogFooter>

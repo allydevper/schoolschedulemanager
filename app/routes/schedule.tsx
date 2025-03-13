@@ -362,7 +362,7 @@ export default function SchedulePage() {
                         <Button onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                             Cancel
                         </Button>
-                        <Button onClick={handleSaveClass} disabled={isSaving || !validateForm()}>
+                        <Button onClick={handleSaveClass} disabled={isSaving || !validateForm()} className="w-full sm:w-auto">
                             {selectedClass ? "Save Changes" : "Add Class"}
                         </Button>
                     </DialogFooter>
